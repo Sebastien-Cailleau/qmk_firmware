@@ -25,3 +25,4 @@ sudo avrdude -p atmega32u4 -P /dev/ttyACM0 -c avr109 -U flash:w:crkbd_rev1_monsi
 
 MCU = atmega32u4
 BOOTLOADER = atmel-dfu
+
