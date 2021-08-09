@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // Tap Dance declarations
 enum {
     CT_CLN,
+    CT_QUOT,
 };
 
 void dance_cln_finished(qk_tap_dance_state_t *state, void *user_data) {
@@ -41,8 +42,25 @@ void dance_cln_reset(qk_tap_dance_state_t *state, void *user_data) {
     }
 }
 
+void dance_quote_finished(qk_tap_dance_state_t *state, void *user_data) {
+    if (state->count == 1) {
+        register_code(KC_QUOT);
+    } else {
+        register_code16(KC_DQT);
+    }
+}
+
+void dance_quote_reset(qk_tap_dance_state_t *state, void *user_data) {
+    if (state->count == 1) {
+        unregister_code(KC_QUOT);
+    } else {
+        unregister_code16(KC_DQT);
+    }
+}
+
 qk_tap_dance_action_t tap_dance_actions[] = {
     [CT_CLN] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, dance_cln_finished, dance_cln_reset),
+    [CT_QUOT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, dance_quote_finished, dance_quote_reset)
 };
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -64,7 +82,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         //,-----------------------------------------------------.                    ,-----------------------------------------------------.
         KC_ESC, KC_Q, KC_W, KC_F, KC_P, KC_B, KC_J, KC_L, KC_U, KC_Y, TD(CT_CLN), KC_BSPC,
         //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-        KC_LCTL, KC_A, KC_R, KC_S, KC_T, KC_G, KC_M, KC_N, KC_E, KC_I, KC_O, KC_QUOT,
+        KC_LCTL, KC_A, KC_R, KC_S, KC_T, KC_G, KC_M, KC_N, KC_E, KC_I, KC_O, TD(CT_QUOT),
         //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
         SFGR, KC_Z, KC_X, KC_C, KC_D, KC_V, KC_K, KC_H, KC_COMM, KC_DOT, KC_SLSH, KC_DEL,
         //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
@@ -101,11 +119,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
      *                   ┌─────┐                                      ┌─────┐
      *             ┌─────┤  2  ├─────┐                          ┌─────┤  7  ├─────┐
      * ┌─────┬─────┤  1  ├─────┤  3  ├─────┐              ┌─────┤  6  ├─────┤  8  ├─────┬─────┐
-     * │ esc │  0  ├─────┤  5  ├─────┤  4  │              │  5  ├─────┤down ├─────┤  9  │ bsp │
-     * ├─────┼─────┤  4  ├─────┤  6  ├─────┤              ├─────┤left ├─────┤ up  ├─────┼─────┤
-     * │ ctr │  4  ├─────┤  8  ├─────┤save │              │  .  ├─────┤pgdwn├─────┤right│     │
-     * ├─────┼─────┤  7  ├─────┤  9  ├─────┤              ├─────┤ end ├─────┤pgup ├─────┼─────┤
-     * │ shi │     ├─────┘     └─────┤  0  │              │     ├─────┘     └─────┤home │ tab │
+     * │ esc │  0  ├─────┤  5  ├─────┤  4  │              │  5  ├─────┤ up  ├─────┤  9  │ bsp │
+     * ├─────┼─────┤  4  ├─────┤  6  ├─────┤              ├─────┤left ├─────┤right├─────┼─────┤
+     * │ ctr │  4  ├─────┤  8  ├─────┤save │              │  .  ├─────┤down ├─────┤pgup │     │
+     * ├─────┼─────┤  7  ├─────┤  9  ├─────┤              ├─────┤home ├─────┤end  ├─────┼─────┤
+     * │ shi │     ├─────┘     └─────┤  0  │              │     ├─────┘     └─────┤pgdo │ tab │
      * └─────┴─────┘        ┌─────┐  └─────┘              └─────┘  ┌─────┐        └─────┴─────┘
      *                      │ os  │┌─────┐┌─────┐    ┌─────┐┌─────┐│ alt │
      *                      └─────┘│  fn3││enter│    │space││     │└─────┘
@@ -115,9 +133,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         //,-----------------------------------------------------.                    ,-----------------------------------------------------.
         KC_ESC, KC_0, KC_1, KC_2, KC_3, KC_4, KC_5, KC_6, KC_7, KC_8, KC_9, KC_BSPC,
         //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-        KC_LCTL, KC_4, KC_4, KC_5, KC_6, C(KC_S), KC_DOT, KC_LEFT, KC_UP, KC_DOWN, KC_RGHT, XXXXXXX,
+        KC_LCTL, KC_4, KC_4, KC_5, KC_6, C(KC_S), KC_DOT, KC_LEFT, KC_UP, KC_RGHT, KC_PGUP, XXXXXXX,
         //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-        KC_LSFT, XXXXXXX, KC_7, KC_8, KC_9, KC_0, XXXXXXX, KC_HOME, KC_PGUP, KC_PGDN, KC_END, KC_TAB,
+        KC_LSFT, XXXXXXX, KC_7, KC_8, KC_9, KC_0, XXXXXXX, KC_HOME, KC_DOWN, KC_END, KC_PGDN, KC_TAB,
         //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
         KC_LGUI, MO(4), KC_ENT, KC_SPC, XXXXXXX, KC_RALT
         //`--------------------------'  `--------------------------'
@@ -189,15 +207,6 @@ oled_rotation_t oled_init_user(oled_rotation_t rotation) {
 #    define L_LOWER  4
 #    define L_RAISE 8
 #    define L_ADJUST 16
-
-// layer_state_t layer_state_set_user(layer_state_t state) {
-//     if (layer_state_cmp(state, 4)) {
-//         autoshift_disable();
-//     } else {
-//         autoshift_enable();
-//     }
-//     return state;
-// }
 
 void oled_render_layer_state(void) {
     oled_write_P(PSTR("--___--  SEB  --___--\n\n"), false);
